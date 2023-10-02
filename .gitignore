@@ -1,0 +1,10 @@
+.venv/
+media/
+cert.crt
+cert.key
+.env
+accounts/static
+*__pycache__*
+*migrations*
+*static*
+*.pyc
