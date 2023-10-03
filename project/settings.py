@@ -86,7 +86,7 @@ WSGI_APPLICATION = "project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-database_routers = ['routers.chatrouter']
+DATABASE_ROUTERS = ['project.routers.Chatrouter']
 
 DATABASES = {
     "default": {

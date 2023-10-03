@@ -1,4 +1,4 @@
-class chatrouter:
+class Chatrouter:
     """
     a router that sends queries for the chat model to the 'mongo_db' database
     and queries for other models to the 'default' database.
