@@ -17,5 +17,3 @@ class JWTAuthMiddleware(BaseJSONWebTokenAuthentication):
 def JWTAuthMiddlewareStack(inner):
     # A wrapper function that applies the JWT auth middleware and the default auth middleware
     return JWTAuthMiddleware(AuthMiddlewareStack(inner))
-
-

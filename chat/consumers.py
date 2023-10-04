@@ -32,5 +32,3 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return User.objects.get(id=user_id)
         except (jwt.DecodeError, User.DoesNotExist):
             return None
-
-

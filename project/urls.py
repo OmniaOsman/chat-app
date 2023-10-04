@@ -29,3 +29,4 @@ urlpatterns = [
     path('ws/', include(websocket_urlpatterns)),
     path('api/', include('chat.urls')),
 ]
+
