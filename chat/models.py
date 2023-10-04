@@ -3,17 +3,13 @@ from accounts.models import User
 
 # Create your models here.
 class Chat(models.Model):
-    sender   = models.ForeignKey(User, 
-                                 related_name='sent_messages', 
-                                 on_delete=models.CASCADE)
-    receiver = models.ForeignKey(User, 
-                                 related_name='received_messages', 
-                                 on_delete=models.CASCADE)
-    image    = models.ImageField(upload_to='chat_images', 
-                              blank=True, 
-                              null=True)
-    message   = models.TextField()
+    sender    = models.CharField(max_length=50)
+    receiver  = models.CharField(max_length=50)
     timestamp = models.DateTimeField(auto_now_add=True)
+    message   = models.TextField()
+    image     = models.ImageField(upload_to='chat_images', 
+                                  blank=True, 
+                                  null=True)
 
     class Meta:
         app_label = 'chat'
