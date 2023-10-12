@@ -4,13 +4,30 @@ from django.core.validators import FileExtensionValidator
 from django.utils.text import slugify
 
 
+import os
+import zipfile
+
 def validate_image_size(value):
-    try:
-        limit = 2 * 1024 * 1024 # e.g. 2MB
-        if value.size > limit:
+    """Validates the size of an image file.
+    Args:
+        value: A file object or a path to an image file.
+    Raises:
+        ValidationError: If the image file is too large or if it is a compression bomb.
+    """
+
+    # Check if the image file is too large.
+    if os.path.isfile(value):
+        file_size = os.path.getsize(value)
+        if file_size > 2 * 1024 * 1024:
             raise ValidationError('File too large. Image should not exceed 2MB.')
-    except AttributeError:
-        raise ValidationError('Invalid value. Expected a file.')
+
+    # Check if the image file is a compression bomb.
+    with zipfile.ZipFile(value, 'r') as zip_file:
+        for zip_info in zip_file.infolist():
+            if zip_info.file_size > 1024 * 1024:
+                raise ValidationError('Compression bomb detected.')
+
+
 
 def validate_image_format(value):
     try:
