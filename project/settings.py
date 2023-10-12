@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from environs import Env
+# from chat.serializers import CustomSerializer
 
 env = Env() 
 env.read_env()
@@ -47,12 +48,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'channels',
-    'channels_redis',
-    
+    'channels_redis',  
     
     # apps
     "accounts",
-    "chat"
+    "chat",
 ]
 
 MIDDLEWARE = [
@@ -141,7 +141,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -174,12 +183,27 @@ DJOSER = {
 }
 
 
+# Celery 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
+CELERY_TASK_ROUTES = {
+    'image_processing': {
+        'queue': 'image_processing',
+        'routing_key': 'image_processing',
+    }
+}
+
+
 ASGI_APPLICATION = "project.asgi.application"
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [("127.0.0.1", 6379)],
+        },
+        "OPTIONS": {
+            "serializer": "channels_redis.core.serializers.PickleSerializer",
         },
     },
 }
