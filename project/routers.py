@@ -8,7 +8,7 @@ class Chatrouter:
         """
         return the database alias for reading operations.
         """
-        if model._meta.app_label == 'chat':
+        if model._meta.app_label == 'chat' :
             return 'mongo_db'
         return 'default'
 
@@ -24,7 +24,9 @@ class Chatrouter:
         """
         return true if a relation between obj1 and obj2 is allowed.
         """
-        if obj1._meta.app_label == 'chat' or obj2._meta.app_label == 'chat':
+        if obj1._meta.app_label == 'chat' and obj2._meta.app_label == 'chat':
+            return True
+        elif obj1._meta.app_label == 'chat' or obj2._meta.app_label == 'chat':
             return False  # relations between chat models and other models are not allowed
         return None  # use the default behavior for other models
 
