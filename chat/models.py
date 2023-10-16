@@ -85,13 +85,13 @@ class ImageFile(models.Model):
 
     
 class Chat(models.Model): 
-    sender    = models.CharField(max_length=50)
-    receiver  = models.CharField(max_length=50)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    message   = models.TextField()
-    chat_room = models.ForeignKey(Room,
+    sender     = models.CharField(max_length=50)
+    receiver   = models.CharField(max_length=50)
+    timestamp  = models.DateTimeField(auto_now_add=True)
+    message    = models.TextField()
+    chat_room  = models.ForeignKey(Room,
                                   on_delete=models.CASCADE)  
-    image     = models.ForeignKey(ImageFile, 
+    chat_image = models.ForeignKey(ImageFile, 
                                   on_delete=models.CASCADE, 
                                   null=True)  
 
