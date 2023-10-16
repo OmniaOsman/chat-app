@@ -36,6 +36,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def create_room(self, room_slug:str) -> Room:
         """ Create a new room with the given room slug. """
+        logger.info(f"Room {self.room_slug} is created.")
         room = Room(room_name=room_slug, room_slug=room_slug)
         room.save()
         return room

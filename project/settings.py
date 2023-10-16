@@ -182,17 +182,14 @@ DJOSER = {
         },
 }
 
-
-# Celery 
+ 
+# Celery configuration
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
-BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
-CELERY_TASK_ROUTES = {
-    'image_processing': {
-        'queue': 'image_processing',
-        'routing_key': 'image_processing',
-    }
-}
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
 
 
 ASGI_APPLICATION = "project.asgi.application"

@@ -27,6 +27,6 @@ urlpatterns = [
     path('auth/', include('djoser.urls.authtoken')),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(websocket_urlpatterns)),
-    path('api/', include('chat.urls')),
+    path('chat/', include('chat.urls')),
 ]
 
