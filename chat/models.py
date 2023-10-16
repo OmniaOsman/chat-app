@@ -69,13 +69,16 @@ class ImageFile(models.Model):
     id = models.TextField(primary_key=True, default=uuid.uuid4)
     uploaded_date = models.DateTimeField(auto_now_add=True)
     image_name = models.CharField(max_length=100, 
-                                     default='image.jpeg')  
+                                     default='image') 
+    resized_image = models.FileField(upload_to='media/resized_images',
+                                     null=True,
+                                     blank=True)
     image_file= models.FileField(upload_to='images/', 
                                       validators=[validate_image_size, 
                                                  validate_image_format])
     
     class Meta:
-        app_label = 'chat'
+        app_label = 'chat' 
         
     def __str__(self):
         return self.image_name
