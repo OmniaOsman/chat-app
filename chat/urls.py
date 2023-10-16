@@ -1,6 +1,9 @@
+from .models import ImageFile, Chat
 from django.urls import path
-from .views import ChatView
+from . import views
+
 
 urlpatterns = [
-    path('chat/<str:sender>/<str:receiver>/', ChatView.as_view(), name='chat-list'),
+    path('<str:room_slug>/', views.ChatListView.as_view()),
+    path('<str:room_slug>/upload/', views.ImageFilesView.as_view()),
 ]
