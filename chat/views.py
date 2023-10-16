@@ -1,3 +1,4 @@
+import logging
 import redis
 from io import BytesIO
 import logging
@@ -16,6 +17,10 @@ class ImageFilesView(CreateAPIView, LoginRequiredMixin):
     
     def post(self, request, *args, **kwargs):
         image_file = request.FILES.get('image_file')
+        
+        # Save the uploaded file in the database
+        image = ImageFile(image_file=image_file)
+        image.save()
 
         # Save the uploaded file in Redis
         redis_client = redis.Redis()
@@ -23,11 +28,12 @@ class ImageFilesView(CreateAPIView, LoginRequiredMixin):
         for chunk in image_file.chunks():
             image_data.write(chunk)
         image_data.seek(0)
-        redis_client.set(image_file.name, image_data.getvalue())
+        image_id = str(image.id)
+        redis_client.set(image_id, image_data.getvalue())
 
         # Call the resize_image task asynchronously
-        resize_image.delay(image_file.name)
-        logging.warning(f'task started')
+        resize_image.delay(image_id)
+        logging.warning(f'Task started for image with ID: {image_id}')
 
         return Response({'message': 'File uploaded successfully'}, 
                         status=status.HTTP_201_CREATED)

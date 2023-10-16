@@ -1,36 +1,33 @@
-import redis
-from io import BytesIO
-from celery import Celery
-from PIL import Image
-from celery import shared_task
+from celery import shared_task, Celery
 from chat.models import ImageFile
 import logging
+import redis
+import os
+from PIL import Image
+from io import BytesIO
 
-app = Celery('tasks', broker='redis://localhost:6379/0', serializer='json')
 
+@shared_task(bind=True)
+def resize_image(self, image_id):
+    thumbnail_size = (100, 100)
+    logging.warning(f'Resizing image with ID: {image_id}')
 
-@shared_task
-def resize_image(image_file_name: str) -> None:
-    """ Resizes an image to the specified thumbnail size 
-    and saves it to Redis. """
-    
-    # Retrieve the image data from Redis
     redis_client = redis.Redis()
-    image_data = redis_client.get(image_file_name)
-    
-    image = Image.open(BytesIO(image_data))
-    cropped_image = image.crop((0, 0, 100, 100))
+    image_data = redis_client.get(image_id)
 
-    # Save the resized image to a BytesIO object
-    resized_image_data = BytesIO()
-    cropped_image.save(resized_image_data, format='JPEG')
-    resized_image_data.seek(0)
+    image_data_io = BytesIO(image_data)
 
-    # Create a new ImageFile object and save the resized image
-    image_file = ImageFile(image_name=image_file_name, 
-                           image_file=resized_image_data)
-    image_file.save()
-    logging.warning(f'Image saved: {image_file.image_name}')
- 
-    # Delete the image data from Redis
-    redis_client.delete(image_file_name)
+    original_image = Image.open(image_data_io)
+    thumbnail_image = original_image.resize(thumbnail_size)
+
+    # Convert the image to RGB mode
+    if thumbnail_image.mode == 'RGBA':
+        thumbnail_image = thumbnail_image.convert('RGB')
+
+    thumbnail_file_name = f"{image_id}-thumbnail.jpg"
+    thumbnail_file_path = os.path.join('media', 'resized_images', thumbnail_file_name)
+    logging.warning(f'Saving thumbnail image to: {thumbnail_file_path}')
+    thumbnail_image.save(thumbnail_file_path)
+
+    return thumbnail_file_path
+
